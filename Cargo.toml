@@ -7,6 +7,10 @@ edition = "2018"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+[[bin]]
+name = "multiprecision_simd"
+path = "src/main.rs"
+
 [features]
 default = ["console_error_panic_hook"]
 
@@ -19,6 +23,13 @@ wasm-bindgen-test = "0.3.34"
 # all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
 # code size when deploying.
 console_error_panic_hook = { version = "0.1.7", optional = true }
+hex = "0.4.3"
+num-bigint = { version = "0.4.6", features = ["rand"] }
+num-traits = "0.2.18"
+rand = "0.8.5"
+rand_chacha = "0.3.1"
+getrandom = { version = "0.2", features = ["js"] }
+
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
@@ -31,4 +42,4 @@ getrandom = { version = "0.2", features = ["js"] }
 
 [profile.release]
 # Tell `rustc` to optimize for small code size.
-opt-level = "s"
+opt-level = 'z'

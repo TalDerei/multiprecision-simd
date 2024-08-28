@@ -1,19 +1,13 @@
 use std::num::Wrapping;
 
 #[derive(Copy, Clone)]
-pub struct BigInt<const N: usize, const B: u32>(
-    #[doc(hidden)]
-    pub [u32; N],
-);
+pub struct BigInt<const N: usize, const B: u32>(#[doc(hidden)] pub [u32; N]);
 
 // 8 * 32 = 256
 pub type BigInt256 = BigInt<8, 32>;
 
 /// Returns lhs > rhs.
-pub fn gt<const N: usize, const B: u32>(
-    lhs: &BigInt<N, B>,
-    rhs: &BigInt<N, B>,
-) -> bool {
+pub fn gt<const N: usize, const B: u32>(lhs: &BigInt<N, B>, rhs: &BigInt<N, B>) -> bool {
     for idx in 0..N {
         let i = N - 1 - idx;
         if lhs.0[i] < rhs.0[i] {
@@ -30,13 +24,10 @@ pub fn gt<const N: usize, const B: u32>(
 /// result will be incorrect.
 ///
 /// # Arguments
-/// 
+///
 /// * `lhs` - the left term (minuend)
 /// * `rhs` - the right term (subtrahend)
-pub fn sub<const N: usize, const B: u32>(
-    lhs: &BigInt<N, B>,
-    rhs: &BigInt<N, B>,
-) -> BigInt<N, B> {
+pub fn sub<const N: usize, const B: u32>(lhs: &BigInt<N, B>, rhs: &BigInt<N, B>) -> BigInt<N, B> {
     let num_limbs = N;
 
     let mut w_borrow = Wrapping(0u32);
@@ -51,7 +42,8 @@ pub fn sub<const N: usize, const B: u32>(
         res[i] = (w_lhs - w_rhs - w_borrow).0;
 
         if lhs.0[i] < (w_rhs + w_borrow).0 {
-            res[i] = (((Wrapping(res[i] as u64) + Wrapping(two_pow_word_size)).0) % 2u64.pow(32)) as u32;
+            res[i] =
+                (((Wrapping(res[i] as u64) + Wrapping(two_pow_word_size)).0) % 2u64.pow(32)) as u32;
             w_borrow = Wrapping(1u32);
         } else {
             w_borrow = Wrapping(0u32);
@@ -60,7 +52,6 @@ pub fn sub<const N: usize, const B: u32>(
 
     BigInt::<N, B>(res)
 }
-
 
 /*
 use core::arch::wasm32::{v128, u32x4, u64x2, u64x2_add, u64x2_sub, u64x2_extract_lane, u64x2_replace_lane};

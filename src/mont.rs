@@ -1,6 +1,6 @@
+use crate::bigint::{gt, sub, BigInt};
 use core::arch::wasm32;
 use std::num::Wrapping;
-use crate::bigint::{BigInt, gt, sub};
 //use web_sys::console;
 
 pub fn to_u64<const N: usize>(v: [u32; N]) -> [u64; N] {
@@ -70,10 +70,8 @@ pub fn bm17_simd_mont_mul<const N: usize, const B: u32>(
         for i in 1..N {
             // p0 = ajbi + t0 + di
             // p1 = qpi + t1 + ei
-            let p01 = wasm32::u64x2_add(
-                wasm32::u64x2_add(t01, de[i]),
-                wasm32::u64x2_mul(aq, bp[i]),
-            );
+            let p01 =
+                wasm32::u64x2_add(wasm32::u64x2_add(t01, de[i]), wasm32::u64x2_mul(aq, bp[i]));
 
             // t0 = p0 / 2^32
             // t1 = p1 / 2^32
@@ -95,10 +93,7 @@ pub fn bm17_simd_mont_mul<const N: usize, const B: u32>(
     }
 
     if gt(&e, &d) {
-        sub(
-            &p_32,
-            &sub(&e, &d),
-        )
+        sub(&p_32, &sub(&e, &d))
     } else {
         sub(&d, &e)
     }
@@ -170,10 +165,7 @@ pub fn bm17_non_simd_mont_mul<const N: usize, const B: u32>(
     let p = BigInt::<N, B>(p_u32);
 
     if gt(&e, &d) {
-        sub(
-            &p,
-            &sub(&e, &d),
-        )
+        sub(&p, &sub(&e, &d))
     } else {
         sub(&d, &e)
     }
